@@ -1,0 +1,88 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX_DIRS 3  
+#define MAX_FILES 3   
+struct Directory {
+    char name[50];
+    char files[MAX_FILES][50];  
+    int file_count;             
+};
+int main() 
+{
+    struct Directory dirs[MAX_DIRS];  
+    int dirCount = 0, choice;
+    while (1) 
+	{
+        printf("\n1. Create Directory\n2. Add File\n3. Display Files\n4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        switch (choice) 
+		{
+            case 1: 
+                if (dirCount < MAX_DIRS) 
+				{
+                    printf("Enter directory name: ");
+                    scanf("%s", dirs[dirCount].name);
+                    dirs[dirCount].file_count = 0;
+                    dirCount++;
+                    printf("Directory created.\n");
+                } else 
+				{
+                    printf("Maximum directories reached.\n");
+                }
+                break;
+            case 2:  
+                {
+                    char dirName[50], fileName[50];
+                    int found = 0;
+                    printf("Enter directory name: ");
+                    scanf("%s", dirName);
+                    printf("Enter file name: ");
+                    scanf("%s", fileName);
+                    for (int i = 0; i < dirCount; i++) 
+					{
+                        if (strcmp(dirs[i].name, dirName) == 0)
+						 {
+                            if (dirs[i].file_count < MAX_FILES)
+							 {
+                                strcpy(dirs[i].files[dirs[i].file_count], fileName);
+                                dirs[i].file_count++;
+                                printf("File added.\n");
+                            } else
+							 {
+                                printf("Maximum files in this directory.\n");
+                            }
+                            found = 1;
+                            break;
+                        }
+                    }
+                    if (!found) 
+					{
+                        printf("Directory not found.\n");
+                    }
+                }
+                break;
+            case 3: 
+                if (dirCount == 0) 
+				{
+                    printf("No directories created.\n");
+                } else
+				 {
+                    for (int i = 0; i < dirCount; i++) 
+					{
+                        printf("\nDirectory: %s\n", dirs[i].name);
+                        for (int j = 0; j < dirs[i].file_count; j++)
+						{
+                            printf("  File: %s\n", dirs[i].files[j]);
+                        }
+                    }
+                }
+                break;
+            case 4:  
+                return 0;
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+    return 0;
+}
