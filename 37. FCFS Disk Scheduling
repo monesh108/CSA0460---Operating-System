@@ -1,0 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+int main() {
+    int requests[] = {98, 183, 41, 122, 14, 124, 65, 67};
+    int n = sizeof(requests) / sizeof(requests[0]), start = 53;
+    int totalSeekCount = 0, currentPosition = start;
+    for (int i = 0; i < n; i++) {
+        totalSeekCount += abs(requests[i] - currentPosition);
+        currentPosition = requests[i];
+    }
+    printf("Total Seek Count: %d\n", totalSeekCount);
+    return 0;
+}
