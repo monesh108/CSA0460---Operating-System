@@ -1,0 +1,38 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define BUFFER_SIZE 1024
+
+int main() {
+    FILE *srcFile, *destFile;
+    char buffer[BUFFER_SIZE];
+    size_t bytesRead;
+    srcFile = fopen("source.txt", "rb");
+    if (srcFile == NULL) {
+        perror("Error opening source file");
+        return EXIT_FAILURE;
+    }
+    destFile = fopen("destination.txt", "wb");
+    if (destFile == NULL) {
+        perror("Error opening destination file");
+        fclose(srcFile);
+        return EXIT_FAILURE;
+    }
+    while ((bytesRead = fread(buffer, 1, BUFFER_SIZE, srcFile)) > 0) {
+        if (fwrite(buffer, 1, bytesRead, destFile) != bytesRead) {
+            perror("Error writing to destination file");
+            fclose(srcFile);
+            fclose(destFile);
+            return EXIT_FAILURE;
+        }
+    }
+
+    if (ferror(srcFile)) {
+        perror("Error reading source file");
+    }
+    fclose(srcFile);
+    fclose(destFile);
+
+    printf("File copied successfully.\n");
+    return EXIT_SUCCESS;
+}
