@@ -1,0 +1,84 @@
+#include <stdio.h>
+#define P 5  
+#define R 3  
+void calculateNeed(int need[][R], int max[][R], int alloc[][R]) 
+{
+    for (int i = 0; i < P; i++) 
+	{
+        for (int j = 0; j < R; j++) 
+		{
+            need[i][j] = max[i][j] - alloc[i][j];
+        }
+    }
+}
+int isSafe(int avail[], int max[][R], int alloc[][R]) 
+{
+    int need[P][R];
+    int finish[P] = {0};
+    int work[R];
+    int count = 0;
+    calculateNeed(need, max, alloc);
+    for (int i = 0; i < R; i++) 
+	{
+        work[i] = avail[i];
+    }
+    while (count < P) 
+	{
+        int found = 0;
+        for (int i = 0; i < P; i++) 
+		{
+            if (!finish[i]) 
+			{
+                int canFinish = 1;
+                for (int j = 0; j < R; j++) 
+				{
+                    if (need[i][j] > work[j]) 
+					{
+                        canFinish = 0;
+                        break;
+                    }
+                }
+                if (canFinish) 
+				{
+                    for (int j = 0; j < R; j++) 
+					{
+                        work[j] += alloc[i][j];
+                    }
+                    finish[i] = 1;
+                    count++;
+                    found = 1;
+                    break;
+                }
+            }
+        }
+        if (!found) 
+		{
+            printf("System is in unsafe state\n");
+            return 0;  
+        }
+    }
+    printf("System is in a safe state\n");
+    return 1;  
+}
+int main() 
+{
+    int avail[] = {3, 3, 2}; 
+    int max[P][R] = 
+	{
+        {7, 5, 3},
+        {3, 2, 2},
+        {9, 0, 2},
+        {2, 2, 2},
+        {4, 3, 3}
+    };
+    int alloc[P][R] = 
+	{
+        {0, 1, 0},
+        {2, 0, 0},
+        {3, 0, 2},
+        {2, 1, 1},
+        {0, 0, 2}
+    };
+    isSafe(avail, max, alloc);
+    return 0;
+}
