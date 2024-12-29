@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+void print_permissions(mode_t mode) {
+    printf((mode & S_IRUSR) ? "r" : "-");
+    printf((mode & S_IWUSR) ? "w" : "-");
+    printf((mode & S_IXUSR) ? "x" : "-");
+    printf((mode & S_IRGRP) ? "r" : "-");
+    printf((mode & S_IWGRP) ? "w" : "-");
+    printf((mode & S_IXGRP) ? "x" : "-");
+    printf((mode & S_IROTH) ? "r" : "-");
+    printf((mode & S_IWOTH) ? "w" : "-");
+    printf((mode & S_IXOTH) ? "x" : "-");
+    printf("\n");
+}
+void display_file_info(const char *file_path) {
+    struct stat file_stat;
+    if (stat(file_path, &file_stat) == -1) {
+        perror("Error retrieving file information");
+        return;
+    }
+    printf("File: %s\n", file_path);
+    printf("File Permissions: ");
+    print_permissions(file_stat.st_mode);
+    printf("Owner: UID = %d\n", file_stat.st_uid);
+    printf("Group: GID = %d\n", file_stat.st_gid);
+    if (S_ISREG(file_stat.st_mode)) {
+        printf("File Type: Regular File\n");
+    } else if (S_ISDIR(file_stat.st_mode)) {
+        printf("File Type: Directory\n");
+    } else if (S_ISBLK(file_stat.st_mode)) {
+        printf("File Type: Symbolic Link\n");
+    } else {
+        printf("File Type: Other\n");
+    }
+}
+int main() {
+    const char *file_path = "testfile.txt";
+    display_file_info(file_path);
+    return 0;
+}
