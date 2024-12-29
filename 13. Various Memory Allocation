@@ -1,0 +1,98 @@
+#include <stdio.h>
+#define MAX_BLOCKS 10
+#define MAX_PROCESSES 5
+struct Process {
+    int size; 
+    int allocated_block; 
+};
+struct MemoryBlock {
+    int size; 
+    int is_allocated; 
+};
+void firstFit(struct MemoryBlock blocks[], int m, struct Process processes[], int n);
+void bestFit(struct MemoryBlock blocks[], int m, struct Process processes[], int n);
+void worstFit(struct MemoryBlock blocks[], int m, struct Process processes[], int n);
+int main() {
+    int m, n;
+    printf("Enter number of memory blocks: ");
+    scanf("%d", &m);
+    struct MemoryBlock blocks[m];
+    struct Process processes[MAX_PROCESSES];
+    printf("Enter sizes of memory blocks: \n");
+    for (int i = 0; i < m; i++) {
+        printf("Block %d size: ", i + 1);
+        scanf("%d", &blocks[i].size);
+        blocks[i].is_allocated = 0; 
+    }
+    printf("\nEnter number of processes: ");
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        printf("Process %d size: ", i + 1);
+        scanf("%d", &processes[i].size);
+        processes[i].allocated_block = -1; 
+    }
+    printf("\nFirst Fit Allocation:\n");
+    firstFit(blocks, m, processes, n);
+    printf("\nBest Fit Allocation:\n");
+    bestFit(blocks, m, processes, n);
+    printf("\nWorst Fit Allocation:\n");
+    worstFit(blocks, m, processes, n);
+    return 0;
+}
+void firstFit(struct MemoryBlock blocks[], int m, struct Process processes[], int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            if (blocks[j].size >= processes[i].size && blocks[j].is_allocated == 0) {
+                blocks[j].is_allocated = 1;
+                processes[i].allocated_block = j;
+                printf("Process %d allocated to Block %d\n", i + 1, j + 1);
+                break;
+            }
+        }
+        if (processes[i].allocated_block == -1)
+            printf("Process %d couldn't be allocated.\n", i + 1);
+    }
+}
+void bestFit(struct MemoryBlock blocks[], int m, struct Process processes[], int n) {
+    for (int i = 0; i < n; i++) {
+        int best_idx = -1;
+        int best_size = 99999;
+
+        for (int j = 0; j < m; j++) {
+            if (blocks[j].size >= processes[i].size && blocks[j].is_allocated == 0) {
+                if (blocks[j].size - processes[i].size < best_size) {
+                    best_size = blocks[j].size - processes[i].size;
+                    best_idx = j;
+                }
+            }
+        }
+        if (best_idx != -1) {
+            blocks[best_idx].is_allocated = 1;
+            processes[i].allocated_block = best_idx;
+            printf("Process %d allocated to Block %d\n", i + 1, best_idx + 1);
+        } else {
+            printf("Process %d couldn't be allocated.\n", i + 1);
+        }
+    }
+}
+void worstFit(struct MemoryBlock blocks[], int m, struct Process processes[], int n) {
+    for (int i = 0; i < n; i++) {
+        int worst_idx = -1;
+        int worst_size = -1;
+        for (int j = 0; j < m; j++) {
+            if (blocks[j].size >= processes[i].size && blocks[j].is_allocated == 0) {
+                if (blocks[j].size - processes[i].size > worst_size) {
+                    worst_size = blocks[j].size - processes[i].size;
+                    worst_idx = j;
+                }
+            }
+        }
+        if (worst_idx != -1) {
+            blocks[worst_idx].is_allocated = 1;
+            processes[i].allocated_block = worst_idx;
+            printf("Process %d allocated to Block %d\n", i + 1, worst_idx + 1);
+        } else {
+            printf("Process %d couldn't be allocated.\n", i + 1);
+        }
+    }
+}
