@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <stdlib.h>
+struct Employee {
+    int id;
+    char name[50];
+    float salary;
+};
+int main() {
+    FILE *file;
+    struct Employee emp;
+    int choice, id;
+    file = fopen("employee.dat", "r+b");
+    if (file == NULL) file = fopen("employee.dat", "w+b");
+    while (1) {
+        printf("\n1. Add Employee\n2. Display Employee\n3. Exit\nEnter your choice: ");
+        scanf("%d", &choice);
+        if (choice == 1) {
+            printf("Enter Employee ID: ");
+            scanf("%d", &emp.id);
+            getchar();  // Clear newline
+            printf("Enter Name: ");
+            fgets(emp.name, 50, stdin);
+            printf("Enter Salary: ");
+            scanf("%f", &emp.salary);
+            fseek(file, (emp.id - 1) * sizeof(struct Employee), SEEK_SET);
+            fwrite(&emp, sizeof(struct Employee), 1, file);
+        } 
+        else if (choice == 2) {
+            printf("Enter Employee ID to view: ");
+            scanf("%d", &id);
+            fseek(file, (id - 1) * sizeof(struct Employee), SEEK_SET);
+            fread(&emp, sizeof(struct Employee), 1, file);
+            printf("ID: %d, Name: %s, Salary: %.2f\n", emp.id, emp.name, emp.salary);
+        }
+        else if (choice == 3) {
+            fclose(file);
+            break;
+        } else {
+            printf("Invalid choice.\n");
+        }
+    }
+    return 0;
+}
