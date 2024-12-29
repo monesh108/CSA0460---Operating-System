@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+int compare(const void *a, const void *b) {
+    return (*(int*)a - *(int*)b);
+}
+void C_SCAN(int requests[], int n, int start, int diskSize, int direction) {
+    int totalSeekCount = 0, currentPosition = start;
+    qsort(requests, n, sizeof(int), compare);
+    if (direction) {
+        for (int i = 0; i < n; i++) {
+            if (requests[i] >= currentPosition) {
+                totalSeekCount += abs(requests[i] - currentPosition);
+                currentPosition = requests[i];
+            }
+        }
+        totalSeekCount += abs(diskSize - 1 - currentPosition);
+        currentPosition = diskSize - 1;
+    } else {
+        for (int i = n - 1; i >= 0; i--) {
+            if (requests[i] <= currentPosition) {
+                totalSeekCount += abs(requests[i] - currentPosition);
+                currentPosition = requests[i];
+            }
+        }
+        totalSeekCount += currentPosition;
+        currentPosition = 0;
+    }
+    for (int i = (direction ? 0 : n - 1); direction ? i < n : i >= 0; direction ? i++ : i--) {
+        if ((direction && requests[i] > currentPosition) || (!direction && requests[i] < currentPosition)) {
+            totalSeekCount += abs(requests[i] - currentPosition);
+            currentPosition = requests[i];
+        }
+    }
+    printf("Total Seek Count: %d\n", totalSeekCount);
+}
+int main() {
+    int requests[] = {98, 183, 41, 122, 14, 124, 65, 67};
+    C_SCAN(requests, sizeof(requests) / sizeof(requests[0]), 53, 200, 1);  // 1 for right, 0 for left
+    return 0;
+}
