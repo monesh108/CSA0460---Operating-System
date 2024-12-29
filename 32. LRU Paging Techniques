@@ -1,0 +1,34 @@
+#include <stdio.h>
+#define MAX_FRAMES 3
+#define NUM_PAGES 10
+void lruPageReplacement(int pages[], int n, int frames) {
+    int mem[frames], recent[frames], pageFaults = 0;
+    for (int i = 0; i < frames; i++) mem[i] = -1;
+    for (int i = 0; i < n; i++) {
+        int page = pages[i], found = 0;
+        for (int j = 0; j < frames; j++) {
+            if (mem[j] == page) {
+                recent[j] = i;
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            int lru = 0;
+            for (int j = 1; j < frames; j++)
+                if (recent[j] < recent[lru]) lru = j;
+            mem[lru] = page;
+            recent[lru] = i;
+            pageFaults++;
+            printf("Page %d fault. Frames: ", page);
+            for (int j = 0; j < frames; j++) printf("%d ", mem[j]);
+            printf("\n");
+        }
+    }
+    printf("Total Page Faults: %d\n", pageFaults);
+}
+int main() {
+    int pages[NUM_PAGES] = {7, 0, 1, 2, 0, 3, 0, 4, 2, 3};
+    lruPageReplacement(pages, NUM_PAGES, MAX_FRAMES);
+    return 0;
+}
