@@ -1,0 +1,19 @@
+#include <stdio.h>
+#include <string.h>
+#define MAX_RECORDS 10
+typedef struct {
+    int id;
+    char data[50];
+} Record;
+int main() {
+    Record file[MAX_RECORDS];
+    int recordCount = 0;
+    file[recordCount++] = (Record){1, "First Record"};
+    file[recordCount++] = (Record){2, "Second Record"};
+    file[recordCount++] = (Record){3, "Third Record"};
+    printf("Sequential File Reading:\n");
+    for (int i = 0; i < recordCount; i++) {
+        printf("Record ID: %d, Data: %s\n", file[i].id, file[i].data);
+    }
+    return 0;
+}
