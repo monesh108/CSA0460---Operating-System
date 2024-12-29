@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdlib.h>
+int main() 
+{
+    FILE *fptr;             
+    char data[] = "This is a test file."; 
+    char buffer[100];       
+    fptr = fopen("test_file.txt", "w");
+    if (!fptr) {
+        perror("Error opening file for writing");
+        return 1;
+    }
+    fwrite(data, sizeof(char), sizeof(data) - 1, fptr);
+    fclose(fptr); 
+    fptr = fopen("test_file.txt", "r");
+    if (!fptr) {
+        perror("Error opening file for reading");
+        return 1;
+    }
+    fread(buffer, sizeof(char), sizeof(buffer) - 1, fptr);
+    buffer[sizeof(buffer) - 1] = '\0';  // Null-terminate the string
+    printf("Read from file: %s\n", buffer);
+    fclose(fptr); 
+    fptr = fopen("test_file.txt", "a");
+    if (!fptr) {
+        perror("Error opening file for appending");
+        return 1;
+    }
+    fwrite("\nAppending more text.", sizeof(char), 21, fptr);
+    fclose(fptr);
+    fptr = fopen("test_file.txt", "r");
+    if (!fptr) {
+        perror("Error opening file for reading");
+        return 1;
+    }
+    fread(buffer, sizeof(char), sizeof(buffer) - 1, fptr);
+    buffer[sizeof(buffer) - 1] = '\0'; 
+    printf("Updated file content: %s\n", buffer);
+    fclose(fptr); 
+    if (remove("test_file.txt") == 0)
+        printf("File deleted.\n");
+    else
+        perror("Error deleting file");
+
+    return 0;
+}
